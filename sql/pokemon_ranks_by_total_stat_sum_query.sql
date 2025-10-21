@@ -3,7 +3,7 @@ WITH total_stats AS (
         FROM pokemon p JOIN pokemon_stats ps ON p.id = ps.pokemon_id
         GROUP BY p.id, p.types
     )
-    SELECT id, name, types, total_stat_sum, 
+    SELECT id as pokemon_id, name  as pokemon_name, types, total_stat_sum, 
         RANK() OVER (PARTITION BY types ORDER BY total_stat_sum DESC) AS rank_within_type
         FROM total_stats
         ORDER BY types, rank_within_type

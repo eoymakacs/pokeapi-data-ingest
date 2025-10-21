@@ -10,10 +10,19 @@ logger = utils.init_log(_config)
 DB_FILE = _config['db']['db_file']
 
 # Analytics Queries
-POKEMON_RANKS_BY_TOTAL_STAT_SUM_QUERY = utils.load_query("pokemon_ranks_by_total_stat_sum_query.sql")
-POKEMON_COUNT_PER_TYPE_QUERY = utils.load_query("pokemon_count_per_type_query.sql")
 
+# Query 1:
+POKEMON_COUNT_PER_TYPE_QUERY = utils.load_query("pokemon_count_per_type_query.sql")
+POKEMON_COUNT_PER_TYPE_QUERY_V2 = utils.load_query("pokemon_count_per_type_query_v2.sql")
+
+# Query 2:
+POKEMON_RANKS_BY_TOTAL_STAT_SUM_QUERY = utils.load_query("pokemon_ranks_by_total_stat_sum_query.sql")
+POKEMON_RANKS_BY_TOTAL_STAT_SUM_QUERY_V2 = utils.load_query("pokemon_ranks_by_total_stat_sum_query_v2.sql")
+
+# Query 3:
 POKEMON_TANKY_CLASSIFICATION_QUERY = utils.load_query("pokemon_tanky_classification_query.sql")
+
+# Query 4:
 MOST_TANKY_POKEMON_QUERY = utils.load_query("most_tanky_pokemon_query.sql") 
 
 # Queries to answer
@@ -31,15 +40,27 @@ def run_analytics_queries():
         rows = c.fetchall()
         logger.info(f"Query 1 completed. Rows: {len(rows)} | Duration: {(datetime.now() - start_time).seconds}s")
 
+        logger.info("\nQuery 1 (Extra): Find the count of all distinct counts of all individual Pokemon types (Multiple types will be splitted into separate rows.)")
+        start_time = datetime.now()
+        c.execute(POKEMON_COUNT_PER_TYPE_QUERY_V2)
+        rows = c.fetchall()
+        logger.info(f"Query 1 (Extra) completed. Rows: {len(rows)} | Duration: {(datetime.now() - start_time).seconds}s")
+
         # Query 2
-        logger.info("\nQuery 2: Rank Pokemon by total stat sum per type")
+        logger.info("\nQuery 2: All Pokemon start with base/initial stat values. These stats are: hp, speed, attack, defense, special attack, special defense. For each type(s), rank order each Pokemon based off the sum of their stats.")
         start_time = datetime.now()
         c.execute(POKEMON_RANKS_BY_TOTAL_STAT_SUM_QUERY)
         rows = c.fetchall()
         logger.info(f"Query 2 completed. Rows: {len(rows)} | Duration: {(datetime.now() - start_time).seconds}s")
 
+        logger.info("\nQuery 2 (Extra): All Pokemon start with base/initial stat values. These stats are: hp, speed, attack, defense, special attack, special defense. For each type(s), rank order each Pokemon based off the sum of their stats (Multiple types will be splitted into separate rows).")
+        start_time = datetime.now()
+        c.execute(POKEMON_RANKS_BY_TOTAL_STAT_SUM_QUERY_V2)
+        rows = c.fetchall()
+        logger.info(f"Query 2 (Extra) completed. Rows: {len(rows)} | Duration: {(datetime.now() - start_time).seconds}s")
+
         # Query 3
-        logger.info("\nQuery 3: Label Pokemon as 'tanky' or 'not tanky'")
+        logger.info("\nQuery 3: A Pokemon is considered tanky if hp or defense is their top stat. Write a query that labels each Pokemon as 'tanky' or 'not tanky'.")
         start_time = datetime.now()
         c.execute(POKEMON_TANKY_CLASSIFICATION_QUERY)
         rows = c.fetchall()

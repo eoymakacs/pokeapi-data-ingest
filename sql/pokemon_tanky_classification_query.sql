@@ -1,4 +1,4 @@
-SELECT p.id, p.name, p.types,
+SELECT p.id as pokemon_id, p.name as pokemon_name, p.types,
         CASE 
             WHEN MAX(CASE WHEN ps.stat_name IN ('hp', 'defense') THEN ps.value ELSE 0 END) = MAX(ps.value) 
                 THEN 'tanky'
