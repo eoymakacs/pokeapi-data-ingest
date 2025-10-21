@@ -1,0 +1,1 @@
+SELECT types, COUNT(*) AS count_per_types FROM pokemon GROUP BY types ORDER BY count_per_types DESC

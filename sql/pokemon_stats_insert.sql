@@ -1,0 +1,1 @@
+INSERT OR REPLACE INTO pokemon_stats (pokemon_id, stat_name, value) VALUES (?, ?, ?)

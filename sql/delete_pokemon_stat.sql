@@ -1,0 +1,1 @@
+DELETE FROM pokemon_stats WHERE pokemon_id = ? AND stat_name = ?

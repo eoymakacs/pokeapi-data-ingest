@@ -1,0 +1,1 @@
+INSERT OR REPLACE INTO pokemon (id, name, types) VALUES (?, ?, ?)

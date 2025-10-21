@@ -1,0 +1,1 @@
+SELECT pokemon_id, stat_name FROM pokemon_stats WHERE pokemon_id IN ({})
