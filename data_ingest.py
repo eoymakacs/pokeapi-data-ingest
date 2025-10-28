@@ -183,6 +183,14 @@ async def main():
             logger.error("DB initialization failed. Process is being stopped.")
             return
 
+        """ 
+        Asynchronous HTTP requests (like calling APIs concurrently without blocking). 
+        It ensures that resources are properly opened and cleaned up without blocking the event loop.
+        You can only use async with inside an async def function.
+        Open an asynchronous HTTP session (connection pool) and assign it to session, 
+        then automatically close it when done.
+        It’s basically the async version of: with requests.Session() as session:
+        """
         async with aiohttp.ClientSession() as session:
             # 1. Get all generation URLs
             generations = await get_all_generations(session)
@@ -202,6 +210,13 @@ async def main():
 
                 # 3. Fetch default Pokemon URLs
                 default_tasks = [get_default_pokemon_url(session, url) for url in species_urls]
+                # *default_tasks -> Argument unpacking 
+                # (asyncio.gather() wants each coroutine as a separate positional argument)
+                # return_exceptions=True -> 
+                # If one of the tasks raises an exception, normally gather() would cancel everything and 
+                # raise the first exception it hits. But with return_exceptions=True, it:
+                # Keeps running all tasks. Returns exceptions in the result list (instead of raising them 
+                # immediately).
                 default_results = await asyncio.gather(*default_tasks, return_exceptions=True)
 
                 pokemon_urls = []
@@ -216,7 +231,11 @@ async def main():
                 logger.info(f"Fetched {len(pokemon_urls)} default Pokemon URLs successfully.")
 
                 # 4. Fetch Pokemon details
+                # We create all coroutines first so we can run them concurrently.
                 detail_tasks = [get_pokemon_details(session, url) for url in pokemon_urls]
+                # asyncio.gather schedules all coroutines to run concurrently in the event loop.
+                # While waiting for responses, the event loop doesn’t block, 
+                # so it can handle other requests immediately.
                 detail_results = await asyncio.gather(*detail_tasks, return_exceptions=True)
 
                 pokemons = []
